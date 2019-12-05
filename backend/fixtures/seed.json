@@ -1,0 +1,147 @@
+[
+  {
+    "model": "backend.user_type",
+    "pk": 1,
+    "fields": {
+      "type": "Admin"
+    }
+  },{
+    "model": "backend.user_type",
+    "pk": 2,
+    "fields": {
+      "type": "Manager"
+    }
+  },{
+    "model": "backend.user_type",
+    "pk": 3,
+    "fields": {
+      "type": "User"
+    }
+  },
+
+  {
+    "model": "backend.user",
+    "pk": 1,
+    "fields": {
+      "first_name": "Eemeli",
+      "last_name": "Ranta",
+      "user_type": 1,
+      "email": "eemeli",
+      "phone": "0",
+      "password": "qwerty"
+    }
+  },{
+    "model": "backend.user",
+    "pk": 2,
+    "fields": {
+      "first_name": "Petri",
+      "last_name": "aaa",
+      "user_type": 2,
+      "email": "petri",
+      "phone": "0",
+      "password": "qwerty"
+    }
+  },{
+    "model": "backend.user",
+    "pk": 3,
+    "fields": {
+      "first_name": "Katri",
+      "last_name": "sss",
+      "user_type": 3,
+      "email": "katri",
+      "phone": "0",
+      "password": "qwerty"
+    }
+  },
+
+  {
+    "model": "backend.restaurant",
+    "pk": 1,
+    "fields": {
+      "name": "Kupittaa",
+      "address": "Kupittaan Puisto",
+      "latitude": 60.445610,
+      "longitude": 22.290214,
+      "lunchtime_start": "12:00",
+      "lunchtime_end": "14:00",
+      "menu_api": "https://www.kupittaanpaviljonki.fi/",
+      "manager": 2
+    }
+  },{
+    "model": "backend.restaurant",
+    "pk": 2,
+    "fields": {
+      "name": "Sodexo",
+      "address": "ICT City",
+      "latitude": 60.449233,
+      "longitude": 22.295106,
+      "lunchtime_start": "11:00",
+      "lunchtime_end": "15:00",
+      "menu_api": "http",
+      "manager": 2
+    }
+  },
+
+  {
+    "model": "backend.reward",
+    "pk": 1,
+    "fields": {
+      "restaurant": 1,
+      "description": "Bronze",
+      "cost": 10
+    }
+  },{
+    "model": "backend.reward",
+    "pk": 2,
+    "fields": {
+      "restaurant": 1,
+      "description": "Silver",
+      "cost": 15
+    }
+  },{
+    "model": "backend.reward",
+    "pk": 3,
+    "fields": {
+      "restaurant": 1,
+      "description": "Gold",
+      "cost": 20
+    }
+  },{
+    "model": "backend.reward",
+    "pk": 4,
+    "fields": {
+      "restaurant": 2,
+      "description": "ruokaa",
+      "cost": 1
+    }
+  },
+
+  {
+    "model": "backend.walk_history",
+    "pk": 1,
+    "fields": {
+      "user": 3,
+      "restaurant": "1",
+      "distance": 5,
+      "date": "2019-12-01T12:44:14+02:00"
+    }
+  },{
+    "model": "backend.walk_history",
+    "pk": 2,
+    "fields": {
+      "user": 3,
+      "restaurant": "1",
+      "distance": 5,
+      "date": "2019-12-01T12:59:10+02:00"
+    }
+  },{
+    "model": "backend.walk_history",
+    "pk": 3,
+    "fields": {
+      "user": 2,
+      "restaurant": "1",
+      "distance": 5,
+      "date": "2019-12-01T12:59:14+02:00"
+    }
+  }
+]
