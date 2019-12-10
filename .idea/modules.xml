@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="ProjectModuleManager">
-    <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/LounasMaraton.iml" filepath="$PROJECT_DIR$/.idea/LounasMaraton.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../SeriesQualityTracker/.idea/seriesquality.iml" filepath="$PROJECT_DIR$/../SeriesQualityTracker/.idea/seriesquality.iml" />
-    </modules>
-  </component>
-</project>
