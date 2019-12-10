@@ -2,6 +2,7 @@ from django.db import models
 from datetime import datetime
 from django.db.models import Sum
 
+
 class User_type(models.Model):
     type = models.CharField(max_length=64)
 
@@ -11,10 +12,11 @@ class User_type(models.Model):
     def __str__(self):
         return self.type
 
+
 class User(models.Model):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
-    user_type = models.ForeignKey(User_type, on_delete=models.PROTECT)
+    user_type = models.ForeignKey(User_type, on_delete=models.PROTECT, default=3)
     email = models.CharField(max_length=64, unique=True)
     phone = models.CharField(max_length=20, blank=True, null=True)
     password = models.CharField(max_length=200)
@@ -23,11 +25,11 @@ class User(models.Model):
         return str(Walk_history.objects.filter(user=self.pk).aggregate(Sum('distance')).get('distance__sum'))
 
     def points_by_restaurant(self):
-        return list(Walk_history.objects\
-            .filter(user=self.pk)\
-            .values('restaurant')\
-            .annotate(Sum('distance'))\
-            .order_by('-distance__sum'))
+        return list(Walk_history.objects \
+                    .filter(user=self.pk) \
+                    .values('restaurant') \
+                    .annotate(Sum('distance')) \
+                    .order_by('-distance__sum'))
 
     def points_by_restaurant_str(self):
         points = self.points_by_restaurant()
@@ -67,7 +69,7 @@ class Reward(models.Model):
     cost = models.IntegerField(default=1)
 
     class Meta:
-        ordering = ['restaurant','-cost']
+        ordering = ['restaurant', '-cost']
 
     def __str__(self):
         return '%s - %s (%s)' % (self.restaurant.name, self.description, self.cost)
