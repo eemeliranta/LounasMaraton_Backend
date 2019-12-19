@@ -20,35 +20,14 @@
   },
 
   {
-    "model": "backend.user",
+    "model": "backend.profile",
     "pk": 1,
     "fields": {
+      "user": 1,
       "first_name": "Eemeli",
       "last_name": "Ranta",
       "user_type": 1,
       "email": "eemeli",
-      "phone": "0",
-      "password": "qwerty"
-    }
-  },{
-    "model": "backend.user",
-    "pk": 2,
-    "fields": {
-      "first_name": "Petri",
-      "last_name": "aaa",
-      "user_type": 2,
-      "email": "petri",
-      "phone": "0",
-      "password": "qwerty"
-    }
-  },{
-    "model": "backend.user",
-    "pk": 3,
-    "fields": {
-      "first_name": "Katri",
-      "last_name": "sss",
-      "user_type": 3,
-      "email": "katri",
       "phone": "0",
       "password": "qwerty"
     }
@@ -65,7 +44,7 @@
       "lunchtime_start": "12:00",
       "lunchtime_end": "14:00",
       "menu_api": "https://www.kupittaanpaviljonki.fi/",
-      "manager": 2
+      "manager": 1
     }
   },{
     "model": "backend.restaurant",
@@ -78,7 +57,7 @@
       "lunchtime_start": "11:00",
       "lunchtime_end": "15:00",
       "menu_api": "http",
-      "manager": 2
+      "manager": 1
     }
   },
 
@@ -120,7 +99,7 @@
     "model": "backend.walk_history",
     "pk": 1,
     "fields": {
-      "user": 3,
+      "profile": 1,
       "restaurant": "1",
       "distance": 5,
       "date": "2019-12-01T12:44:14+02:00"
@@ -129,7 +108,7 @@
     "model": "backend.walk_history",
     "pk": 2,
     "fields": {
-      "user": 3,
+      "profile": 1,
       "restaurant": "1",
       "distance": 5,
       "date": "2019-12-01T12:59:10+02:00"
@@ -138,7 +117,7 @@
     "model": "backend.walk_history",
     "pk": 3,
     "fields": {
-      "user": 2,
+      "profile": 1,
       "restaurant": "1",
       "distance": 5,
       "date": "2019-12-01T12:59:14+02:00"

@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import User_type, User, Restaurant, Walk_history, Reward, Claimed_reward
+from .models import User_type, Profile, Restaurant, Walk_history, Reward, Claimed_reward
 
 class RewardsInline(admin.TabularInline):
     model = Reward
@@ -21,7 +21,7 @@ class UserAdmin(admin.ModelAdmin):
 
 
 admin.site.register(User_type)
-admin.site.register(User, UserAdmin)
+admin.site.register(Profile, UserAdmin)
 admin.site.register(Restaurant, RestaurantAdmin)
 admin.site.register(Walk_history)
 admin.site.register(Claimed_reward)

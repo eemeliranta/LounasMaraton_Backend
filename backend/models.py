@@ -1,7 +1,7 @@
 from django.db import models
 from datetime import datetime
 from django.db.models import Sum
-
+from django.contrib.auth.models import User
 
 class User_type(models.Model):
     type = models.CharField(max_length=64)
@@ -13,7 +13,8 @@ class User_type(models.Model):
         return self.type
 
 
-class User(models.Model):
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30)
     user_type = models.ForeignKey(User_type, on_delete=models.PROTECT, default=3)
@@ -22,11 +23,11 @@ class User(models.Model):
     password = models.CharField(max_length=200)
 
     def total_points(self):
-        return str(Walk_history.objects.filter(user=self.pk).aggregate(Sum('distance')).get('distance__sum'))
+        return str(Walk_history.objects.filter(profile=self.pk).aggregate(Sum('distance')).get('distance__sum'))
 
     def points_by_restaurant(self):
         return list(Walk_history.objects \
-                    .filter(user=self.pk) \
+                    .filter(profile=self.pk) \
                     .values('restaurant') \
                     .annotate(Sum('distance')) \
                     .order_by('-distance__sum'))
@@ -54,7 +55,7 @@ class Restaurant(models.Model):
     lunchtime_start = models.TimeField()
     lunchtime_end = models.TimeField()
     menu_api = models.CharField(max_length=500)
-    manager = models.ForeignKey(User, on_delete=models.PROTECT)
+    manager = models.ForeignKey(Profile, on_delete=models.PROTECT)
 
     class Meta:
         ordering = ['name']
@@ -76,21 +77,21 @@ class Reward(models.Model):
 
 
 class Claimed_reward(models.Model):
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    profile = models.ForeignKey(Profile, on_delete=models.PROTECT)
     reward = models.ForeignKey(Reward, on_delete=models.PROTECT)
     date = models.DateTimeField(default=datetime.now)
     passcode = models.CharField(max_length=200)
     redeemed = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ['user']
+        ordering = ['profile']
 
     def __str__(self):
-        return '%s %s Claimed %s' % (self.user.first_name, self.user.last_name, self.passcode)
+        return '%s %s Claimed %s' % (self.profile.first_name, self.profile.last_name, self.passcode)
 
 
 class Walk_history(models.Model):
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    profile = models.ForeignKey(Profile, on_delete=models.PROTECT)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.PROTECT)
     distance = models.FloatField(default=0)
     date = models.DateTimeField(default=datetime.now, blank=True)
@@ -99,4 +100,4 @@ class Walk_history(models.Model):
         ordering = ['restaurant']
 
     def __str__(self):
-        return '%s %s Walked %skm' % (self.user.first_name, self.user.last_name, self.distance)
+        return '%s %s Walked %skm' % (self.profile.first_name, self.profile.last_name, self.distance)
