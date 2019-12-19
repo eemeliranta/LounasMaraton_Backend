@@ -1,9 +1,23 @@
 # This file is used for the api
 from rest_framework import serializers, viewsets
-from .models import User_type, Profile, Restaurant, Walk_history, Reward, Claimed_reward
+from .models import Profile, Restaurant, Walk_history, Reward, Claimed_reward
+from django.contrib.auth.models import User, Group
 
 
 # Serializers
+
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'password', 'groups', 'user_permissions',
+                  'is_staff', 'is_active', 'is_superuser', 'last_login', 'date_joined']
+
+
+class GroupSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Group
+        fields = ['id', 'name', 'permissions']
+
 
 class WalkHistorySerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -23,14 +37,8 @@ class ClaimedRewardSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['id', 'reward', 'date', 'passcode', 'redeemed']
 
 
-class UserTypeSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = User_type
-        fields = ['id', 'type']
-
 
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
-    user_type = serializers.StringRelatedField()
     walk_history_set = serializers.HyperlinkedRelatedField(
         many=True,
         read_only=True,
@@ -44,7 +52,7 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ['id', 'first_name', 'last_name', 'email', 'phone', 'user_type', 'points_by_restaurant_str',
+        fields = ['id', 'phone', 'points_by_restaurant_str',
                   'walk_history_set', 'claimed_reward_set']
 
 
@@ -52,5 +60,3 @@ class RestaurantSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Restaurant
         fields = ['id', 'name', 'address', 'latitude', 'longitude', 'lunchtime_start', 'lunchtime_end', 'manager']
-
-

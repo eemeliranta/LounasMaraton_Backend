@@ -9,7 +9,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 
-from .models import User_type, Profile, Restaurant, Walk_history, Reward, Claimed_reward
+from .models import Profile, Restaurant, Walk_history, Reward, Claimed_reward
+from django.contrib.auth.models import User, Group
 from . import serializers
 
 
@@ -26,11 +27,6 @@ def index(request):
 
 
 # ViewSets for the API
-class UserTypeViewSet(viewsets.ModelViewSet):
-    queryset = User_type.objects.all()
-    serializer_class = serializers.UserTypeSerializer
-
-
 class ProfileViewSet(viewsets.ModelViewSet):
     queryset = Profile.objects.all()
     serializer_class = serializers.ProfileSerializer
@@ -54,3 +50,13 @@ class RewardViewSet(viewsets.ModelViewSet):
 class ClaimedRewardViewSet(viewsets.ModelViewSet):
     queryset = Claimed_reward.objects.all()
     serializer_class = serializers.ClaimedRewardSerializer
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = serializers.UserSerializer
+
+
+class GroupViewSet(viewsets.ModelViewSet):
+    queryset = Group.objects.all()
+    serializer_class = serializers.GroupSerializer

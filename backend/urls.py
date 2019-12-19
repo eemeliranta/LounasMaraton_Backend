@@ -6,10 +6,11 @@ from . import views
 router = routers.DefaultRouter()
 router.register(r'restaurant',      views.RestaurantViewSet)
 router.register(r'profile',         views.ProfileViewSet)
-router.register(r'user_type',       views.UserTypeViewSet)
 router.register(r'walk_history',    views.WalkHistoryViewSet)
 router.register(r'reward',          views.RewardViewSet)
 router.register(r'claimed_reward',  views.ClaimedRewardViewSet)
+router.register(r'user',            views.UserViewSet)
+router.register(r'group',            views.GroupViewSet)
 
 urlpatterns = [
     path('', views.index, name='index'),

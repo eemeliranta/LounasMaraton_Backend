@@ -1,21 +1,21 @@
 [
   {
-    "model": "backend.user_type",
+    "model": "auth.group",
     "pk": 1,
     "fields": {
-      "type": "Admin"
+      "name": "Admin"
     }
   },{
-    "model": "backend.user_type",
+    "model": "auth.group",
     "pk": 2,
     "fields": {
-      "type": "Manager"
+      "name": "Manager"
     }
   },{
-    "model": "backend.user_type",
+    "model": "auth.group",
     "pk": 3,
     "fields": {
-      "type": "User"
+      "name": "User"
     }
   },
 
@@ -24,10 +24,6 @@
     "pk": 1,
     "fields": {
       "user": 1,
-      "first_name": "Eemeli",
-      "last_name": "Ranta",
-      "user_type": 1,
-      "email": "eemeli",
       "phone": "0",
       "password": "qwerty"
     }
