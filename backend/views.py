@@ -7,7 +7,7 @@ from rest_framework import viewsets
 from django.shortcuts import redirect
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
 
 from .models import Profile, Restaurant, Walk_history, Reward, Claimed_reward
 from django.contrib.auth.models import User, Group
@@ -23,7 +23,7 @@ class HelloView(APIView):
 
 
 def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
+    return HttpResponse("Lounasmaraton backend")
 
 
 # ViewSets for the API
@@ -38,8 +38,15 @@ class RestaurantViewSet(viewsets.ModelViewSet):
 
 
 class WalkHistoryViewSet(viewsets.ModelViewSet):
-    queryset = Walk_history.objects.all()
     serializer_class = serializers.WalkHistorySerializer
+
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Walk_history.objects.none()
+        elif self.request.user.is_staff:
+            return Walk_history.objects.all()
+        else:
+            return Walk_history.objects.filter(pk=self.request.user.pk)
 
 
 class RewardViewSet(viewsets.ModelViewSet):
