@@ -34,12 +34,11 @@ class Profile(models.Model):
     def __str__(self):
         return '%s %s' % (self.user.first_name, self.user.last_name)
 
-
+# Automatically create a profile when user is created or modified
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
-
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
@@ -86,7 +85,7 @@ class Claimed_reward(models.Model):
         ordering = ['profile']
 
     def __str__(self):
-        return '%s %s Claimed %s' % (self.profile.first_name, self.profile.last_name, self.passcode)
+        return '%s %s Claimed %s' % (self.profile.user.first_name, self.profile.user.last_name, self.passcode)
 
 
 class Walk_history(models.Model):

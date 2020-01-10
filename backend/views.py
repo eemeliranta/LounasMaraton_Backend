@@ -28,8 +28,15 @@ def index(request):
 
 # ViewSets for the API
 class ProfileViewSet(viewsets.ModelViewSet):
-    queryset = Profile.objects.all()
     serializer_class = serializers.ProfileSerializer
+
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Profile.objects.none()
+        elif self.request.user.is_staff:
+            return Profile.objects.all()
+        else:
+            return Profile.objects.filter(user=self.request.user.pk)
 
 
 class RestaurantViewSet(viewsets.ModelViewSet):
@@ -40,6 +47,7 @@ class RestaurantViewSet(viewsets.ModelViewSet):
 class WalkHistoryViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.WalkHistorySerializer
 
+    # Custom queryset to return only allowed results
     def get_queryset(self):
         if not self.request.user.is_authenticated:
             return Walk_history.objects.none()
@@ -55,13 +63,27 @@ class RewardViewSet(viewsets.ModelViewSet):
 
 
 class ClaimedRewardViewSet(viewsets.ModelViewSet):
-    queryset = Claimed_reward.objects.all()
     serializer_class = serializers.ClaimedRewardSerializer
+
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return Claimed_reward.objects.none()
+        elif self.request.user.is_staff:
+            return Claimed_reward.objects.all()
+        else:
+            return Claimed_reward.objects.filter(profile__user=self.request.user.pk)
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
     serializer_class = serializers.UserSerializer
+
+    def get_queryset(self):
+        if not self.request.user.is_authenticated:
+            return User.objects.none()
+        elif self.request.user.is_staff:
+            return User.objects.all()
+        else:
+            return User.objects.filter(pk=self.request.user.pk)
 
 
 class GroupViewSet(viewsets.ModelViewSet):

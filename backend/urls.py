@@ -6,12 +6,12 @@ from django.conf.urls import include
 
 router = routers.DefaultRouter()
 router.register(r'restaurant',      views.RestaurantViewSet)
-router.register(r'profile',         views.ProfileViewSet)
+router.register(r'profile',         views.ProfileViewSet, basename='profile')
 router.register(r'walk_history',    views.WalkHistoryViewSet, basename='walk_history')
-router.register(r'reward',          views.RewardViewSet)
-router.register(r'claimed_reward',  views.ClaimedRewardViewSet)
-router.register(r'user',            views.UserViewSet)
-router.register(r'group',           views.GroupViewSet)
+router.register(r'reward',          views.RewardViewSet, basename='reward')
+router.register(r'claimed_reward',  views.ClaimedRewardViewSet, basename='claimed_reward')
+router.register(r'user',            views.UserViewSet, basename='user')
+router.register(r'group',           views.GroupViewSet, basename='group')
 
 urlpatterns = [
     path('', views.index, name='index'),
