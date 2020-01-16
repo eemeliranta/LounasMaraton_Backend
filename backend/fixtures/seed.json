@@ -20,16 +20,6 @@
   },
 
   {
-    "model": "backend.profile",
-    "pk": 1,
-    "fields": {
-      "user": 1,
-      "phone": "0",
-      "password": "qwerty"
-    }
-  },
-
-  {
     "model": "backend.restaurant",
     "pk": 1,
     "fields": {

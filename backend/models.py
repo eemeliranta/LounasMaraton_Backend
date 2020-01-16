@@ -4,6 +4,7 @@ from django.db.models import Sum
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from rest_framework.authtoken.models import Token
 
 
 class Profile(models.Model):
@@ -34,15 +35,23 @@ class Profile(models.Model):
     def __str__(self):
         return '%s %s' % (self.user.first_name, self.user.last_name)
 
+
 # Automatically create a profile when user is created or modified
 @receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
+def create_user_profile(sender, instance=None, created=False, **kwargs):
     if created:
         Profile.objects.create(user=instance)
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
+
+
+# Automatically create a auth_token when user is created or modified
+@receiver(post_save, sender=User)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)
 
 
 class Restaurant(models.Model):
@@ -82,7 +91,7 @@ class Claimed_reward(models.Model):
     redeemed = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ['profile']
+        ordering = ['date']
 
     def __str__(self):
         return '%s %s Claimed %s' % (self.profile.user.first_name, self.profile.user.last_name, self.passcode)
@@ -95,7 +104,7 @@ class Walk_history(models.Model):
     date = models.DateTimeField(default=datetime.now, blank=True)
 
     class Meta:
-        ordering = ['restaurant']
+        ordering = ['-date']
 
     def __str__(self):
         return '%s %s Walked %skm' % (self.profile.user.first_name, self.profile.user.last_name, self.distance)

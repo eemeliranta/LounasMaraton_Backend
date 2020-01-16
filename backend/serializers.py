@@ -15,7 +15,7 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'password', 'groups',
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'groups',
                   'is_staff', 'is_active', 'is_superuser', 'last_login', 'date_joined']
 
 
@@ -51,7 +51,7 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ['id', 'phone', 'points_by_restaurant_str',
+        fields = ['id', 'phone', 'points_by_restaurant',
                   'walk_history_set', 'claimed_reward_set']
 
 
