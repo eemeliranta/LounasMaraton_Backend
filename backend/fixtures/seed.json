@@ -85,28 +85,28 @@
     "model": "backend.walk_history",
     "pk": 1,
     "fields": {
-      "profile": 1,
+      "user": 1,
       "restaurant": "1",
       "distance": 5,
-      "date": "2019-12-01T12:44:14+02:00"
+      "timestamp": "2019-12-01T12:44:14+02:00"
     }
   },{
     "model": "backend.walk_history",
     "pk": 2,
     "fields": {
-      "profile": 1,
+      "user": 1,
       "restaurant": "1",
       "distance": 5,
-      "date": "2019-12-01T12:59:10+02:00"
+      "timestamp": "2019-12-01T12:59:10+02:00"
     }
   },{
     "model": "backend.walk_history",
     "pk": 3,
     "fields": {
-      "profile": 1,
+      "user": 1,
       "restaurant": "1",
       "distance": 5,
-      "date": "2019-12-01T12:59:14+02:00"
+      "timestamp": "2019-12-01T12:59:14+02:00"
     }
   }
 ]

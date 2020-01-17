@@ -62,7 +62,7 @@ class Restaurant(models.Model):
     lunchtime_start = models.TimeField()
     lunchtime_end = models.TimeField()
     menu_api = models.CharField(max_length=500)
-    manager = models.ForeignKey(Profile, on_delete=models.PROTECT)
+    manager = models.ForeignKey(User, on_delete=models.PROTECT)
 
     class Meta:
         ordering = ['name']
@@ -84,27 +84,27 @@ class Reward(models.Model):
 
 
 class Claimed_reward(models.Model):
-    profile = models.ForeignKey(Profile, on_delete=models.PROTECT)
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
     reward = models.ForeignKey(Reward, on_delete=models.PROTECT)
-    date = models.DateTimeField(default=datetime.now)
+    timestamp = models.DateTimeField(default=datetime.now)
     passcode = models.CharField(max_length=200)
     redeemed = models.BooleanField(default=False)
 
     class Meta:
-        ordering = ['date']
+        ordering = ['-timestamp']
 
     def __str__(self):
-        return '%s %s Claimed %s' % (self.profile.user.first_name, self.profile.user.last_name, self.passcode)
+        return '%s %s Claimed %s' % (self.user.first_name, self.user.last_name, self.passcode)
 
 
 class Walk_history(models.Model):
-    profile = models.ForeignKey(Profile, on_delete=models.PROTECT)
+    user = models.ForeignKey(User, on_delete=models.PROTECT)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.PROTECT)
     distance = models.FloatField(default=0)
-    date = models.DateTimeField(default=datetime.now, blank=True)
+    timestamp = models.DateTimeField(default=datetime.now, blank=True)
 
     class Meta:
-        ordering = ['-date']
+        ordering = ['-timestamp']
 
     def __str__(self):
-        return '%s %s Walked %skm' % (self.profile.user.first_name, self.profile.user.last_name, self.distance)
+        return '%s %s Walked %skm' % (self.user.first_name, self.user.last_name, self.distance)

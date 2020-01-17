@@ -20,9 +20,12 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class WalkHistorySerializer(serializers.HyperlinkedModelSerializer):
+
+
+
     class Meta:
         model = Walk_history
-        fields = ['id', 'profile', 'restaurant', 'distance', 'date']
+        fields = ['id', 'profile', 'restaurant', 'distance', 'timestamp']
 
 
 class RewardSerializer(serializers.HyperlinkedModelSerializer):
@@ -34,7 +37,7 @@ class RewardSerializer(serializers.HyperlinkedModelSerializer):
 class ClaimedRewardSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Claimed_reward
-        fields = ['id', 'reward', 'date', 'passcode', 'redeemed']
+        fields = ['id', 'reward', 'timestamp', 'passcode', 'redeemed']
 
 
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
@@ -64,4 +67,5 @@ class RestaurantSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Restaurant
-        fields = ['id', 'name', 'address', 'latitude', 'longitude', 'lunchtime_start', 'lunchtime_end', 'manager', 'reward_set']
+        fields = ['id', 'name', 'address', 'latitude', 'longitude', 'lunchtime_start', 'lunchtime_end', 'manager',
+                  'reward_set']
