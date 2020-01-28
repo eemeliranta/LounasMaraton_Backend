@@ -28,12 +28,11 @@ def index(request):
 
 # ViewSets for the API
 class ProfileViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,)
     serializer_class = serializers.ProfileSerializer
 
     def get_queryset(self):
-        if not self.request.user.is_authenticated:
-            return Profile.objects.none()
-        elif self.request.user.is_staff:
+        if self.request.user.is_staff:
             return Profile.objects.all()
         else:
             return Profile.objects.filter(user=self.request.user.pk)
@@ -43,15 +42,37 @@ class RestaurantViewSet(viewsets.ModelViewSet):
     queryset = Restaurant.objects.all()
     serializer_class = serializers.RestaurantSerializer
 
+    # Vain admin voi tehdä ravintolan
+    # Managerit voivat muokata omaa ravintolaa
+
+    # def list(self, request):
+    #     queryset = Restaurant.objects.all()
+    #     serializer = serializers.RestaurantSerializer(queryset, many=True, context={'request':request})
+    #     return Response(serializer.data)
+
+    def create(self, request):
+        pass
+
+    # def retrieve(self, request, pk=None):
+    #     pass
+    #
+    # def update(self, request, pk=None):
+    #     pass
+    #
+    # def partial_update(self, request, pk=None):
+    #     pass
+    #
+    def destroy(self, request, pk=None):
+        pass
+
 
 class WalkHistoryViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,)
     serializer_class = serializers.WalkHistorySerializer
 
     # Custom queryset to return only allowed results
     def get_queryset(self):
-        if not self.request.user.is_authenticated:
-            return Walk_history.objects.none()
-        elif self.request.user.is_staff:
+        if self.request.user.is_staff:
             return Walk_history.objects.all()
         else:
             return Walk_history.objects.filter(pk=self.request.user.pk)
@@ -63,29 +84,28 @@ class RewardViewSet(viewsets.ModelViewSet):
 
 
 class ClaimedRewardViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,)
     serializer_class = serializers.ClaimedRewardSerializer
 
     def get_queryset(self):
-        if not self.request.user.is_authenticated:
-            return Claimed_reward.objects.none()
-        elif self.request.user.is_staff:
+        if self.request.user.is_staff:
             return Claimed_reward.objects.all()
         else:
             return Claimed_reward.objects.filter(profile__user=self.request.user.pk)
 
 
 class UserViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,)
     serializer_class = serializers.UserSerializer
 
     def get_queryset(self):
-        if not self.request.user.is_authenticated:
-            return User.objects.none()
-        elif self.request.user.is_staff:
+        if self.request.user.is_staff:
             return User.objects.all()
         else:
             return User.objects.filter(pk=self.request.user.pk)
 
 
 class GroupViewSet(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,)
     queryset = Group.objects.all()
     serializer_class = serializers.GroupSerializer

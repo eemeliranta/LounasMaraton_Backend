@@ -84,7 +84,7 @@ class Reward(models.Model):
 
 
 class Claimed_reward(models.Model):
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    profile = models.ForeignKey(Profile, on_delete=models.PROTECT)
     reward = models.ForeignKey(Reward, on_delete=models.PROTECT)
     timestamp = models.DateTimeField(default=datetime.now)
     passcode = models.CharField(max_length=200)
@@ -94,11 +94,11 @@ class Claimed_reward(models.Model):
         ordering = ['-timestamp']
 
     def __str__(self):
-        return '%s %s Claimed %s' % (self.user.first_name, self.user.last_name, self.passcode)
+        return '%s %s Claimed %s' % (self.profile.user.first_name, self.profile.user.last_name, self.passcode)
 
 
 class Walk_history(models.Model):
-    user = models.ForeignKey(User, on_delete=models.PROTECT)
+    profile = models.ForeignKey(Profile, on_delete=models.PROTECT)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.PROTECT)
     distance = models.FloatField(default=0)
     timestamp = models.DateTimeField(default=datetime.now, blank=True)
@@ -107,4 +107,4 @@ class Walk_history(models.Model):
         ordering = ['-timestamp']
 
     def __str__(self):
-        return '%s %s Walked %skm' % (self.user.first_name, self.user.last_name, self.distance)
+        return '%s %s Walked %skm' % (self.profile.user.first_name, self.profile.user.last_name, self.distance)

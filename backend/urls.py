@@ -5,7 +5,7 @@ from . import views
 from django.conf.urls import include
 
 router = routers.DefaultRouter()
-router.register(r'restaurant',      views.RestaurantViewSet)
+router.register(r'restaurant',      views.RestaurantViewSet, basename='restaurant')
 router.register(r'profile',         views.ProfileViewSet, basename='profile')
 router.register(r'walk_history',    views.WalkHistoryViewSet, basename='walk_history')
 router.register(r'reward',          views.RewardViewSet, basename='reward')
