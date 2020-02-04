@@ -12,50 +12,41 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['id', 'name']
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'groups',
-                  'is_staff', 'is_active', 'is_superuser', 'last_login', 'date_joined']
-
-
 class WalkHistorySerializer(serializers.HyperlinkedModelSerializer):
-
-
-
     class Meta:
         model = Walk_history
-        fields = ['id', 'profile', 'restaurant', 'distance', 'timestamp']
+        fields = ['restaurant', 'distance', 'timestamp']
 
 
 class RewardSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Reward
-        fields = ['id', 'restaurant', 'description', 'cost']
+        fields = ['restaurant', 'description', 'cost']
 
 
 class ClaimedRewardSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Claimed_reward
-        fields = ['id', 'reward', 'timestamp', 'passcode', 'redeemed']
+        fields = ['reward', 'timestamp', 'passcode', 'redeemed']
 
 
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
-    walk_history_set = serializers.HyperlinkedRelatedField(
-        many=True,
-        read_only=True,
-        view_name='walk_history-detail'
-    )
-    claimed_reward_set = serializers.HyperlinkedRelatedField(
-        many=True,
-        read_only=True,
-        view_name='claimed_reward-detail'
-    )
+    walk_history = WalkHistorySerializer(many=True, read_only=True)
+    claimed_reward = ClaimedRewardSerializer(many=True, read_only=True)
 
     class Meta:
         model = Profile
-        fields = ['id', 'phone', 'points_by_restaurant',
-                  'walk_history_set', 'claimed_reward_set']
+        fields = ['phone', 'points_by_restaurant',
+                  'walk_history', 'claimed_reward']
+
+
+class UserSerializer(serializers.HyperlinkedModelSerializer):
+    profile = ProfileSerializer(many=False, read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'groups', 'is_staff', 'is_active',
+                  'is_superuser', 'last_login', 'date_joined', 'profile']
 
 
 class RestaurantSerializer(serializers.HyperlinkedModelSerializer):
