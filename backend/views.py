@@ -32,10 +32,7 @@ class ProfileViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ProfileSerializer
 
     def get_queryset(self):
-        if self.request.user.is_staff:
-            return Profile.objects.all()
-        else:
-            return Profile.objects.filter(user=self.request.user.pk)
+        return Profile.objects.filter(user=self.request.user.pk)
 
 
 class RestaurantViewSet(viewsets.ModelViewSet):
@@ -88,10 +85,7 @@ class ClaimedRewardViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.ClaimedRewardSerializer
 
     def get_queryset(self):
-        if self.request.user.is_staff:
-            return Claimed_reward.objects.all()
-        else:
-            return Claimed_reward.objects.filter(profile__user=self.request.user.pk)
+        return Claimed_reward.objects.filter(profile__user=self.request.user.pk)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -99,10 +93,7 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.UserSerializer
 
     def get_queryset(self):
-        if self.request.user.is_staff:
-            return User.objects.all()
-        else:
-            return User.objects.filter(pk=self.request.user.pk)
+        return User.objects.filter(pk=self.request.user.pk)
 
 
 class GroupViewSet(viewsets.ModelViewSet):
