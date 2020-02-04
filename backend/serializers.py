@@ -31,13 +31,13 @@ class ClaimedRewardSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
-    walk_history = WalkHistorySerializer(many=True, read_only=True)
-    claimed_reward = ClaimedRewardSerializer(many=True, read_only=True)
+    walk_history_set = WalkHistorySerializer(many=True, read_only=True)
+    claimed_reward_set = ClaimedRewardSerializer( many=True, read_only=True)
 
     class Meta:
         model = Profile
         fields = ['phone', 'points_by_restaurant',
-                  'walk_history', 'claimed_reward']
+                  'walk_history_set', 'claimed_reward_set']
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
