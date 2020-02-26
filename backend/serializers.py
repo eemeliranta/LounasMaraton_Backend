@@ -2,6 +2,7 @@
 from rest_framework import serializers, viewsets
 from .models import Profile, Restaurant, Walk_history, Reward, Claimed_reward
 from django.contrib.auth.models import User, Group
+from datetime import datetime
 
 
 # Serializers
@@ -14,6 +15,8 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 
 class WalkHistorySerializer(serializers.HyperlinkedModelSerializer):
     profile_id = serializers.PrimaryKeyRelatedField(read_only=True)
+    restaurant = serializers.PrimaryKeyRelatedField(many=False, read_only=False, queryset=Restaurant.objects.all())
+    distance = serializers.FloatField(min_value=0, max_value=None)
     timestamp = serializers.DateTimeField(read_only=True)
 
     class Meta:
@@ -21,7 +24,9 @@ class WalkHistorySerializer(serializers.HyperlinkedModelSerializer):
         fields = ['profile_id', 'restaurant', 'distance', 'timestamp']
 
     def create(self, validated_data):
-        return Walk_history.objects.create(profile_id=self.context['request'].user.profile.id, **validated_data)
+        return Walk_history.objects.create(profile_id=self.context['request'].user.profile.id,
+                                           timestamp=datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
+                                           **validated_data)
 
 
 class RewardSerializer(serializers.HyperlinkedModelSerializer):
