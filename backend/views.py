@@ -69,10 +69,10 @@ class WalkHistoryViewSet(viewsets.ModelViewSet):
 
     # Custom queryset to return only allowed results
     def get_queryset(self):
-        if self.request.user.is_staff:
-            return Walk_history.objects.all()
-        else:
-            return Walk_history.objects.filter(pk=self.request.user.pk)
+        # if self.request.user.is_staff:
+        #     return Walk_history.objects.all()
+        # else:
+        return Walk_history.objects.filter(profile_id=self.request.user.pk)
 
 
 class RewardViewSet(viewsets.ModelViewSet):

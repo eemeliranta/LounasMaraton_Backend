@@ -13,9 +13,15 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class WalkHistorySerializer(serializers.HyperlinkedModelSerializer):
+    profile_id = serializers.PrimaryKeyRelatedField(read_only=True)
+    timestamp = serializers.DateTimeField(read_only=True)
+
     class Meta:
         model = Walk_history
-        fields = ['restaurant', 'distance', 'timestamp']
+        fields = ['profile_id', 'restaurant', 'distance', 'timestamp']
+
+    def create(self, validated_data):
+        return Walk_history.objects.create(profile_id=self.context['request'].user.profile.id, **validated_data)
 
 
 class RewardSerializer(serializers.HyperlinkedModelSerializer):
@@ -37,7 +43,7 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Profile
         fields = ['phone', 'points_by_restaurant']
-                  # 'walk_history_set', 'claimed_reward_set']
+        # 'walk_history_set', 'claimed_reward_set']
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):

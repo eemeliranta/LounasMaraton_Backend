@@ -42,6 +42,7 @@ def create_user_profile(sender, instance=None, created=False, **kwargs):
     if created:
         Profile.objects.create(user=instance)
 
+
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.profile.save()
@@ -101,7 +102,7 @@ class Walk_history(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.PROTECT)
     restaurant = models.ForeignKey(Restaurant, on_delete=models.PROTECT)
     distance = models.FloatField(default=0)
-    timestamp = models.DateTimeField(default=datetime.now, blank=True)
+    timestamp = models.DateTimeField(default=datetime.now().strftime("%Y-%m-%dT%H:%M:%S"), blank=True)
 
     class Meta:
         ordering = ['-timestamp']
