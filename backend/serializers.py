@@ -24,7 +24,17 @@ class WalkHistorySerializer(serializers.HyperlinkedModelSerializer):
         fields = ['profile_id', 'restaurant', 'distance', 'timestamp']
 
     def create(self, validated_data):
-        return Walk_history.objects.create(profile_id=self.context['request'].user.profile.id,
+        request = self.context['request']
+        recordsToday = Walk_history.objects.filter(profile_id=request.user.profile.id,
+                                                   timestamp__year=datetime.now().year,
+                                                   timestamp__month=datetime.now().month,
+                                                   timestamp__day=datetime.now().day
+                                                   ).count()
+
+        if recordsToday > 0:
+            return Walk_history.objects.filter(profile_id=request.user.profile.id).first()
+
+        return Walk_history.objects.create(profile_id=request.user.profile.id,
                                            timestamp=datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
                                            **validated_data)
 
