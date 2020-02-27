@@ -103,6 +103,8 @@ class Walk_history(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.PROTECT)
     distance = models.FloatField(default=0)
     timestamp = models.DateTimeField(default=datetime.now, blank=True)
+    latitude = models.FloatField(default=0)
+    longitude = models.FloatField(default=0)
 
     class Meta:
         ordering = ['-timestamp']

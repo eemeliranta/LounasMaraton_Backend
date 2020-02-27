@@ -18,10 +18,12 @@ class WalkHistorySerializer(serializers.HyperlinkedModelSerializer):
     restaurant = serializers.PrimaryKeyRelatedField(many=False, read_only=False, queryset=Restaurant.objects.all())
     distance = serializers.FloatField(min_value=0, max_value=None)
     timestamp = serializers.DateTimeField(read_only=True)
+    latitude = serializers.FloatField(read_only=False)
+    longitude = serializers.FloatField(read_only=False)
 
     class Meta:
         model = Walk_history
-        fields = ['profile_id', 'restaurant', 'distance', 'timestamp']
+        fields = ['profile_id', 'restaurant', 'distance', 'timestamp', 'latitude', 'longitude']
 
     def create(self, validated_data):
         request = self.context['request']
