@@ -7,9 +7,26 @@ from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
 
 
+class Restaurant(models.Model):
+    name = models.CharField(max_length=64)
+    address = models.CharField(max_length=64)
+    latitude = models.FloatField(default=0)
+    longitude = models.FloatField(default=0)
+    lunchtime_start = models.TimeField()
+    lunchtime_end = models.TimeField()
+    menu_api = models.CharField(max_length=500)
+
+    class Meta:
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     phone = models.CharField(max_length=20, blank=True, null=True)
+    manager_of = models.ForeignKey(Restaurant, blank=True, null=True, on_delete=models.PROTECT)
 
     def total_points(self):
         return str(Walk_history.objects.filter(profile=self.pk).aggregate(Sum('distance')).get('distance__sum'))
@@ -53,23 +70,6 @@ def save_user_profile(sender, instance, **kwargs):
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
         Token.objects.create(user=instance)
-
-
-class Restaurant(models.Model):
-    name = models.CharField(max_length=64)
-    address = models.CharField(max_length=64)
-    latitude = models.FloatField(default=0)
-    longitude = models.FloatField(default=0)
-    lunchtime_start = models.TimeField()
-    lunchtime_end = models.TimeField()
-    menu_api = models.CharField(max_length=500)
-    manager = models.ForeignKey(User, on_delete=models.PROTECT)
-
-    class Meta:
-        ordering = ['name']
-
-    def __str__(self):
-        return self.name
 
 
 class Reward(models.Model):

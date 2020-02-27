@@ -96,7 +96,7 @@ class UserViewSet(viewsets.ModelViewSet):
         return User.objects.filter(pk=self.request.user.pk)
 
 
-class GroupViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated,)
-    queryset = Group.objects.all()
-    serializer_class = serializers.GroupSerializer
+# class GroupViewSet(viewsets.ModelViewSet):
+#     permission_classes = (IsAuthenticated,)
+#     queryset = Group.objects.all()
+#     serializer_class = serializers.GroupSerializer

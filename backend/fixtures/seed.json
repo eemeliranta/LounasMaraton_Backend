@@ -1,38 +1,18 @@
 [
   {
-    "model": "auth.group",
-    "pk": 1,
-    "fields": {
-      "name": "Admin"
-    }
-  },{
-    "model": "auth.group",
-    "pk": 2,
-    "fields": {
-      "name": "Manager"
-    }
-  },{
-    "model": "auth.group",
-    "pk": 3,
-    "fields": {
-      "name": "User"
-    }
-  },
-
-  {
     "model": "backend.restaurant",
     "pk": 1,
     "fields": {
-      "name": "Kupittaa",
+      "name": "Kupittaan Paviljonki",
       "address": "Kupittaan Puisto",
       "latitude": 60.445610,
       "longitude": 22.290214,
       "lunchtime_start": "12:00",
       "lunchtime_end": "14:00",
-      "menu_api": "https://www.kupittaanpaviljonki.fi/",
-      "manager": 1
+      "menu_api": "https://www.kupittaanpaviljonki.fi/"
     }
-  },{
+  },
+  {
     "model": "backend.restaurant",
     "pk": 2,
     "fields": {
@@ -42,11 +22,9 @@
       "longitude": 22.295106,
       "lunchtime_start": "11:00",
       "lunchtime_end": "15:00",
-      "menu_api": "http",
-      "manager": 1
+      "menu_api": "http"
     }
   },
-
   {
     "model": "backend.reward",
     "pk": 1,
@@ -55,7 +33,8 @@
       "description": "Bronze",
       "cost": 10
     }
-  },{
+  },
+  {
     "model": "backend.reward",
     "pk": 2,
     "fields": {
@@ -63,7 +42,8 @@
       "description": "Silver",
       "cost": 15
     }
-  },{
+  },
+  {
     "model": "backend.reward",
     "pk": 3,
     "fields": {
@@ -71,42 +51,14 @@
       "description": "Gold",
       "cost": 20
     }
-  },{
+  },
+  {
     "model": "backend.reward",
     "pk": 4,
     "fields": {
       "restaurant": 2,
       "description": "ruokaa",
       "cost": 1
-    }
-  },
-
-  {
-    "model": "backend.walk_history",
-    "pk": 1,
-    "fields": {
-      "user": 1,
-      "restaurant": "1",
-      "distance": 5,
-      "timestamp": "2019-12-01T12:44:14+02:00"
-    }
-  },{
-    "model": "backend.walk_history",
-    "pk": 2,
-    "fields": {
-      "user": 1,
-      "restaurant": "1",
-      "distance": 5,
-      "timestamp": "2019-12-01T12:59:10+02:00"
-    }
-  },{
-    "model": "backend.walk_history",
-    "pk": 3,
-    "fields": {
-      "user": 1,
-      "restaurant": "1",
-      "distance": 5,
-      "timestamp": "2019-12-01T12:59:14+02:00"
     }
   }
 ]

@@ -7,10 +7,10 @@ from datetime import datetime
 
 # Serializers
 
-class GroupSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Group
-        fields = ['id', 'name']
+# class GroupSerializer(serializers.HyperlinkedModelSerializer):
+#     class Meta:
+#         model = Group
+#         fields = ['id', 'name']
 
 
 class WalkHistorySerializer(serializers.HyperlinkedModelSerializer):
@@ -40,24 +40,30 @@ class WalkHistorySerializer(serializers.HyperlinkedModelSerializer):
 
 
 class RewardSerializer(serializers.HyperlinkedModelSerializer):
+    restaurant = serializers.PrimaryKeyRelatedField(many=False, read_only=False, queryset=Restaurant.objects.all())
+
     class Meta:
         model = Reward
         fields = ['restaurant', 'description', 'cost']
 
 
 class ClaimedRewardSerializer(serializers.HyperlinkedModelSerializer):
+    profile = serializers.PrimaryKeyRelatedField(many=False, read_only=False, queryset=Restaurant.objects.all())
+    reward = serializers.PrimaryKeyRelatedField(many=False, read_only=False, queryset=Reward.objects.all())
+
     class Meta:
         model = Claimed_reward
-        fields = ['reward', 'timestamp', 'passcode', 'redeemed']
+        fields = ['profile', 'reward', 'timestamp', 'passcode', 'redeemed']
 
 
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
     # walk_history_set = WalkHistorySerializer(many=True, read_only=True)
     # claimed_reward_set = ClaimedRewardSerializer( many=True, read_only=True)
+    manager_of = serializers.PrimaryKeyRelatedField(many=False, read_only=False, queryset=Restaurant.objects.all())
 
     class Meta:
         model = Profile
-        fields = ['phone', 'points_by_restaurant']
+        fields = ['phone', 'manager_of', 'points_by_restaurant']
         # 'walk_history_set', 'claimed_reward_set']
 
 
@@ -66,8 +72,8 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'groups', 'is_staff', 'is_active',
-                  'is_superuser', 'last_login', 'date_joined', 'profile']
+        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'profile']
+        # , 'is_staff', 'is_active', 'is_superuser', 'last_login', 'date_joined'
 
 
 class RestaurantSerializer(serializers.HyperlinkedModelSerializer):
@@ -75,5 +81,4 @@ class RestaurantSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Restaurant
-        fields = ['id', 'name', 'address', 'latitude', 'longitude', 'lunchtime_start', 'lunchtime_end', 'manager',
-                  'reward_set']
+        fields = ['id', 'name', 'address', 'latitude', 'longitude', 'lunchtime_start', 'lunchtime_end', 'reward_set']
