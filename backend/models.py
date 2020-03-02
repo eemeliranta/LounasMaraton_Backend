@@ -29,7 +29,7 @@ class Profile(models.Model):
     manager_of = models.ForeignKey(Restaurant, blank=True, null=True, on_delete=models.PROTECT)
 
     def total_points(self):
-        return str(Walk_history.objects.filter(profile=self.pk).aggregate(Sum('distance')).get('distance__sum'))
+        return Walk_history.objects.filter(profile=self.pk).aggregate(Sum('distance')).get('distance__sum')
 
     def points_by_restaurant(self):
         return list(Walk_history.objects \
@@ -93,6 +93,10 @@ class Claimed_reward(models.Model):
 
     class Meta:
         ordering = ['-timestamp']
+
+    def generate_passcode(self):
+        active_codes = list(Claimed_reward.objects.filter(redeemed=False).values('passcode'))
+        return active_codes
 
     def __str__(self):
         return '%s %s Claimed %s' % (self.profile.user.first_name, self.profile.user.last_name, self.passcode)

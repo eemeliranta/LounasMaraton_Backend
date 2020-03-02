@@ -5,8 +5,8 @@
     "fields": {
       "name": "Kupittaan Paviljonki",
       "address": "Kupittaan Puisto",
-      "latitude": 60.4489529,
-      "longitude": 22.2959858,
+      "latitude": 60.445632,
+      "longitude": 22.290214,
       "lunchtime_start": "12:00",
       "lunchtime_end": "14:00",
       "menu_api": "https://www.kupittaanpaviljonki.fi/"

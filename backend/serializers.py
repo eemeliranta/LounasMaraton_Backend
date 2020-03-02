@@ -55,7 +55,7 @@ class ClaimedRewardSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Claimed_reward
-        fields = ['profile', 'reward', 'timestamp', 'passcode', 'redeemed']
+        fields = ['profile', 'reward', 'timestamp', 'passcode', 'redeemed', 'generate_passcode']
 
 
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
@@ -65,7 +65,7 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ['phone', 'manager_of', 'points_by_restaurant']
+        fields = ['phone', 'manager_of', 'total_points']
         # 'walk_history_set', 'claimed_reward_set']
 
 
