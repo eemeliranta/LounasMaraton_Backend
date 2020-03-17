@@ -17,9 +17,8 @@ class RestaurantAdmin(admin.ModelAdmin):
 
 class ProfileAdmin(admin.ModelAdmin):
     fields = ['user', 'phone', 'points_by_restaurant_str', 'manager_of']
-    list_display = ['user', 'phone', 'total_points', 'total_points', 'manager_of']
+    list_display = ['user', 'total_points', 'total_points', 'manager_of']
     readonly_fields = ['points_by_restaurant_str']
-    search_fields = ['phone']
 
 
 admin.site.register(Profile, ProfileAdmin)

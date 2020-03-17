@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
+import uuid
 
 
 class Restaurant(models.Model):
@@ -25,12 +26,14 @@ class Restaurant(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    phone = models.CharField(max_length=20, blank=True, null=True)
     manager_of = models.ForeignKey(Restaurant, blank=True, null=True, on_delete=models.PROTECT)
 
+    # Total amount of points the user has
+    # TODO reduce used reward points from total
     def total_points(self):
         return Walk_history.objects.filter(profile=self.pk).aggregate(Sum('distance')).get('distance__sum')
 
+    # List of points the user has, per restaurant
     def points_by_restaurant(self):
         return list(Walk_history.objects \
                     .filter(profile=self.pk) \
@@ -38,6 +41,7 @@ class Profile(models.Model):
                     .annotate(Sum('distance')) \
                     .order_by('-distance__sum'))
 
+    # List of points the user has, per restaurant, in string format
     def points_by_restaurant_str(self):
         points = self.points_by_restaurant()
         string = ""
@@ -45,6 +49,23 @@ class Profile(models.Model):
             rest = str(list(Restaurant.objects.filter(id=i.get('restaurant')))[0])
             string = '%s %s %s\n' % (string, rest, str(i.get('distance__sum')))
         return string
+
+    # We check if user has already walked today
+    def walked_today(self):
+        records_today = Walk_history.objects.filter(profile=self,
+                                                    timestamp__year=datetime.now().year,
+                                                    timestamp__month=datetime.now().month,
+                                                    timestamp__day=datetime.now().day
+                                                    ).count()
+        if records_today > 0:
+            return True
+        return False
+
+
+    # Check if user has unredeemed rewards and deletes them
+    def clear_unredeemed_rewards(self):
+        pass
+
 
     class Meta:
         ordering = ['user']
@@ -88,15 +109,21 @@ class Claimed_reward(models.Model):
     profile = models.ForeignKey(Profile, on_delete=models.PROTECT)
     reward = models.ForeignKey(Reward, on_delete=models.PROTECT)
     timestamp = models.DateTimeField(default=datetime.now)
-    passcode = models.CharField(max_length=200)
+    passcode = models.CharField(max_length=10)
     redeemed = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-timestamp']
 
+    # Generates a 5 long string that is not being used in a reward that is unclaimed
     def generate_passcode(self):
         active_codes = list(Claimed_reward.objects.filter(redeemed=False).values('passcode'))
-        return active_codes
+        while True:
+            # 3 Length code = 42840 possible codes
+            # 4 Length code = 1413720 possible codes
+            new_code = uuid.uuid4().hex[:3].upper()
+            if new_code not in active_codes:
+                return new_code
 
     def __str__(self):
         return '%s %s Claimed %s' % (self.profile.user.first_name, self.profile.user.last_name, self.passcode)

@@ -14,7 +14,7 @@ from datetime import datetime
 
 
 class WalkHistorySerializer(serializers.HyperlinkedModelSerializer):
-    profile_id = serializers.PrimaryKeyRelatedField(read_only=True)
+    profile = serializers.PrimaryKeyRelatedField(read_only=True)
     restaurant = serializers.PrimaryKeyRelatedField(many=False, read_only=False, queryset=Restaurant.objects.all())
     distance = serializers.FloatField(min_value=0, max_value=None)
     timestamp = serializers.DateTimeField(read_only=True)
@@ -23,20 +23,16 @@ class WalkHistorySerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Walk_history
-        fields = ['profile_id', 'restaurant', 'distance', 'timestamp', 'latitude', 'longitude']
+        fields = ['profile', 'restaurant', 'distance', 'timestamp', 'latitude', 'longitude']
 
     def create(self, validated_data):
         request = self.context['request']
-        recordsToday = Walk_history.objects.filter(profile_id=request.user.profile.id,
-                                                   timestamp__year=datetime.now().year,
-                                                   timestamp__month=datetime.now().month,
-                                                   timestamp__day=datetime.now().day
-                                                   ).count()
 
-        if recordsToday > 0:
-            return Walk_history.objects.filter(profile_id=request.user.profile.id).first()
+        if request.user.profile.walked_today():
+            print(request.user, 'tried to walk a second time today.')
+            return Walk_history.objects.filter(profile=request.user.profile).first()
 
-        return Walk_history.objects.create(profile_id=request.user.profile.id,
+        return Walk_history.objects.create(profile=request.user.profile,
                                            timestamp=datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
                                            **validated_data)
 
@@ -57,16 +53,24 @@ class ClaimedRewardSerializer(serializers.HyperlinkedModelSerializer):
         model = Claimed_reward
         fields = ['profile', 'reward', 'timestamp', 'passcode', 'redeemed', 'generate_passcode']
 
+    def create(self, validated_data):
+        request = self.context['request']
+
+        if request.user.profile.walked_today():
+            print(request.user, 'tried to walk a second time today.')
+            return Walk_history.objects.filter(profile=request.user.profile).first()
+
+        return Walk_history.objects.create(profile=request.user.profile,
+                                           timestamp=datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
+                                           **validated_data)
+
 
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
-    # walk_history_set = WalkHistorySerializer(many=True, read_only=True)
-    # claimed_reward_set = ClaimedRewardSerializer( many=True, read_only=True)
     manager_of = serializers.PrimaryKeyRelatedField(many=False, read_only=False, queryset=Restaurant.objects.all())
 
     class Meta:
         model = Profile
-        fields = ['phone', 'manager_of', 'total_points']
-        # 'walk_history_set', 'claimed_reward_set']
+        fields = ['manager_of', 'total_points']
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
