@@ -29,11 +29,16 @@ class Profile(models.Model):
     manager_of = models.ForeignKey(Restaurant, blank=True, null=True, on_delete=models.PROTECT)
 
     # Total amount of points the user has
-    # TODO reduce used reward points from total
+    @property
     def total_points(self):
-        return Walk_history.objects.filter(profile=self.pk).aggregate(Sum('distance')).get('distance__sum')
+        total_walked = Walk_history.objects.filter(profile=self).aggregate(Sum('distance')).get('distance__sum')
+        claimed_rewards = Claimed_reward.objects.filter(profile=self).aggregate(Sum('reward__cost')).get(
+            'reward__cost__sum')
+        return total_walked - claimed_rewards
 
     # List of points the user has, per restaurant
+    # TODO, negate used points from restaurants
+    # To be fixed if development continues
     def points_by_restaurant(self):
         return list(Walk_history.objects \
                     .filter(profile=self.pk) \
@@ -61,17 +66,17 @@ class Profile(models.Model):
             return True
         return False
 
-
     # Check if user has unredeemed rewards and deletes them
-    def clear_unredeemed_rewards(self):
-        pass
-
+    def delete_unredeemed_rewards(self):
+        rewards = Claimed_reward.objects.filter(profile=self, redeemed=False)
+        for reward in rewards:
+            reward.delete()
 
     class Meta:
         ordering = ['user']
 
     def __str__(self):
-        return '%s %s' % (self.user.first_name, self.user.last_name)
+        return '%s %s (%s)' % (self.user.first_name, self.user.last_name, self.user.username)
 
 
 # Automatically create a profile when user is created or modified
@@ -79,20 +84,14 @@ class Profile(models.Model):
 def create_user_profile(sender, instance=None, created=False, **kwargs):
     if created:
         Profile.objects.create(user=instance)
-
-
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.profile.save()
-
-
-# Automatically create a auth_token when user is created or modified
-@receiver(post_save, sender=User)
-def create_auth_token(sender, instance=None, created=False, **kwargs):
-    if created:
         Token.objects.create(user=instance)
+    else:
+        instance.profile.save()
 
 
+# TODO
+# Need to save reward restaurant, description and cost to the claimed reward
+# Else if restaurant changes the reward, already claimed rewards will also change
 class Reward(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.PROTECT)
     description = models.CharField(max_length=64)
@@ -116,7 +115,8 @@ class Claimed_reward(models.Model):
         ordering = ['-timestamp']
 
     # Generates a 5 long string that is not being used in a reward that is unclaimed
-    def generate_passcode(self):
+    @staticmethod
+    def generate_passcode():
         active_codes = list(Claimed_reward.objects.filter(redeemed=False).values('passcode'))
         while True:
             # 3 Length code = 42840 possible codes
@@ -126,7 +126,7 @@ class Claimed_reward(models.Model):
                 return new_code
 
     def __str__(self):
-        return '%s %s Claimed %s' % (self.profile.user.first_name, self.profile.user.last_name, self.passcode)
+        return '%s %s Reward %s' % (self.profile, (self.redeemed and 'Redeemed' or 'Unredeemed'), self.reward)
 
 
 class Walk_history(models.Model):
@@ -134,6 +134,8 @@ class Walk_history(models.Model):
     restaurant = models.ForeignKey(Restaurant, on_delete=models.PROTECT)
     distance = models.FloatField(default=0)
     timestamp = models.DateTimeField(default=datetime.now, blank=True)
+    # Where the user started walking
+    # This can be used in the future to show on a map where the customers come from
     latitude = models.FloatField(default=0)
     longitude = models.FloatField(default=0)
 

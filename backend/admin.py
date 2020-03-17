@@ -7,6 +7,16 @@ class RewardsInline(admin.TabularInline):
     model = Reward
     extra = 0
 
+class ClaimedRewardsInline(admin.TabularInline):
+    model = Claimed_reward
+    extra = 0
+    readonly_fields = ['reward','passcode']
+
+
+class WalkHistoryInline(admin.TabularInline):
+    model = Walk_history
+    extra = 0
+
 
 class RestaurantAdmin(admin.ModelAdmin):
     fields = ['name', 'address', 'latitude', 'longitude', 'lunchtime_start', 'lunchtime_end']
@@ -16,12 +26,11 @@ class RestaurantAdmin(admin.ModelAdmin):
 
 
 class ProfileAdmin(admin.ModelAdmin):
-    fields = ['user', 'phone', 'points_by_restaurant_str', 'manager_of']
-    list_display = ['user', 'total_points', 'total_points', 'manager_of']
-    readonly_fields = ['points_by_restaurant_str']
+    fields = ['user', 'total_points', 'manager_of']
+    list_display = ['user', 'total_points', 'manager_of']
+    readonly_fields = ['user','total_points']
+    inlines = [ClaimedRewardsInline, WalkHistoryInline]
 
 
 admin.site.register(Profile, ProfileAdmin)
 admin.site.register(Restaurant, RestaurantAdmin)
-admin.site.register(Walk_history)
-admin.site.register(Claimed_reward)
