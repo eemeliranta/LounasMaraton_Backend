@@ -11,12 +11,12 @@ router.register(r'walk_history',    views.WalkHistoryViewSet, basename='walk_his
 # router.register(r'reward',          views.RewardViewSet, basename='reward')
 router.register(r'claimed_reward',  views.ClaimedRewardViewSet, basename='claimed_reward')
 router.register(r'user',            views.UserViewSet, basename='user')
-# router.register(r'group',           views.GroupViewSet, basename='group')
 
 urlpatterns = [
     path('', views.index, name='index'),
     path('hello/', views.HelloView.as_view(), name='hello'),
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
     path('api-auth/', include('rest_framework.urls')),
+    path('register/', views.UserRegistrationAPIView.as_view(), name='register'),
     re_path('^api/', include(router.urls)),
 ]

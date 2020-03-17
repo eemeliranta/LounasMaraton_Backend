@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Profile, Restaurant, Walk_history, Reward, Claimed_reward
 from django.contrib.auth.models import User
 from datetime import datetime
+from django.contrib.auth.hashers import make_password
 
 
 # Serializers
@@ -61,7 +62,7 @@ class ClaimedRewardSerializer(serializers.HyperlinkedModelSerializer):
                                              timestamp=datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
                                              passcode=Claimed_reward.generate_passcode(),
                                              redeemed=False,
-                                             **validated_data)
+                                             reward=validated_data['reward'])
 
     def update(self, instance, validated_data):
         if self.context['request'].user.profile.manager_of != instance.reward.restaurant:
@@ -94,3 +95,45 @@ class RestaurantSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Restaurant
         fields = ['id', 'name', 'address', 'latitude', 'longitude', 'lunchtime_start', 'lunchtime_end', 'reward_set']
+
+
+# https://github.com/beingaskar/django-rest-framework-user-registration
+class UserRegistrationSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(label="Email Address")
+    password = serializers.CharField(style={'input_type': 'password'})
+    password_2 = serializers.CharField(label="Confirm Password", style={'input_type': 'password'})
+    first_name = serializers.CharField(required=True)
+    last_name = serializers.CharField(required=True)
+
+    class Meta(object):
+        model = User
+        fields = ['email', 'password', 'password_2', 'first_name', 'last_name']
+
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("Email already exists.")
+        return value
+
+    def validate_password(self, value):
+        if len(value) < 8:
+            raise serializers.ValidationError("Password should be atleast 8 characters long.")
+        return value
+
+    def validate_password_2(self, value):
+        data = self.get_initial()
+        password = data.get('password')
+        if password != value:
+            raise serializers.ValidationError("Passwords doesn't match.")
+        return value
+
+    def create(self, validated_data):
+        user_data = {
+            'username': validated_data.get('email'),
+            'email': validated_data.get('email'),
+            'password': validated_data.get('password'),
+            'first_name': validated_data.get('first_name'),
+            'last_name': validated_data.get('last_name')
+        }
+
+        User.objects.create_user(**user_data)
+        return validated_data

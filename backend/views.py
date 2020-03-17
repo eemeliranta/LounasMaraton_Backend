@@ -3,11 +3,11 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views import generic
 from django.http import HttpResponse
-from rest_framework import viewsets
+from rest_framework import viewsets, status, permissions, generics
 from django.shortcuts import redirect
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, DjangoModelPermissions
+from rest_framework.decorators import api_view
 
 from .models import Profile, Restaurant, Walk_history, Reward, Claimed_reward
 from django.contrib.auth.models import User, Group
@@ -15,7 +15,7 @@ from . import serializers
 
 
 class HelloView(APIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request):
         content = {'message': 'Hello, World!'}
@@ -28,7 +28,7 @@ def index(request):
 
 # ViewSets for the API
 class ProfileViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.ProfileSerializer
 
     def get_queryset(self):
@@ -64,7 +64,7 @@ class RestaurantViewSet(viewsets.ModelViewSet):
 
 
 class WalkHistoryViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.WalkHistorySerializer
 
     # Custom queryset to return only allowed results
@@ -81,7 +81,7 @@ class RewardViewSet(viewsets.ModelViewSet):
 
 
 class ClaimedRewardViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticated)
     serializer_class = serializers.ClaimedRewardSerializer
 
     def get_queryset(self):
@@ -89,14 +89,14 @@ class ClaimedRewardViewSet(viewsets.ModelViewSet):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.UserSerializer
 
     def get_queryset(self):
         return User.objects.filter(pk=self.request.user.pk)
 
 
-# class GroupViewSet(viewsets.ModelViewSet):
-#     permission_classes = (IsAuthenticated,)
-#     queryset = Group.objects.all()
-#     serializer_class = serializers.GroupSerializer
+class UserRegistrationAPIView(generics.CreateAPIView):
+    permission_classes = (permissions.AllowAny,)
+    serializer_class = serializers.UserRegistrationSerializer
+    queryset = User.objects.all()
