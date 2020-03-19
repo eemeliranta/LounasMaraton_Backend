@@ -3,7 +3,7 @@ from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
 from django.views import generic
 from django.http import HttpResponse
-from rest_framework import viewsets, status, permissions, generics
+from rest_framework import viewsets, status, permissions, generics, mixins
 from django.shortcuts import redirect
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -14,16 +14,8 @@ from django.contrib.auth.models import User, Group
 from . import serializers
 
 
-class HelloView(APIView):
-    permission_classes = (permissions.IsAuthenticated,)
-
-    def get(self, request):
-        content = {'message': 'Hello, World!'}
-        return Response(content)
-
-
 def index(request):
-    return HttpResponse("Lounasmaraton backend")
+    return HttpResponse("Lounas Maraton")
 
 
 # ViewSets for the API
@@ -35,60 +27,40 @@ class ProfileViewSet(viewsets.ModelViewSet):
         return Profile.objects.filter(user=self.request.user.pk)
 
 
-class RestaurantViewSet(viewsets.ModelViewSet):
+class RestaurantViewSet(mixins.RetrieveModelMixin,
+                        mixins.ListModelMixin,
+                        viewsets.GenericViewSet):
+    permission_classes = (permissions.AllowAny,)
     queryset = Restaurant.objects.all()
     serializer_class = serializers.RestaurantSerializer
-
-    # Vain admin voi tehdä ravintolan
-    # Managerit voivat muokata omaa ravintolaa
-
-    # def list(self, request):
-    #     queryset = Restaurant.objects.all()
-    #     serializer = serializers.RestaurantSerializer(queryset, many=True, context={'request':request})
-    #     return Response(serializer.data)
-
-    def create(self, request):
-        pass
-
-    # def retrieve(self, request, pk=None):
-    #     pass
-    #
-    # def update(self, request, pk=None):
-    #     pass
-    #
-    # def partial_update(self, request, pk=None):
-    #     pass
-    #
-    def destroy(self, request, pk=None):
-        pass
 
 
 class WalkHistoryViewSet(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.WalkHistorySerializer
 
-    # Custom queryset to return only allowed results
+    # Return only users own results
     def get_queryset(self):
-        # if self.request.user.is_staff:
-        #     return Walk_history.objects.all()
-        # else:
         return Walk_history.objects.filter(profile_id=self.request.user.pk)
 
 
-class RewardViewSet(viewsets.ModelViewSet):
-    queryset = Reward.objects.all()
-    serializer_class = serializers.RewardSerializer
+# class RewardViewSet(viewsets.ModelViewSet):
+#     permission_classes = (permissions.AllowAny,)
+#     queryset = Reward.objects.all()
+#     serializer_class = serializers.RewardSerializer
 
 
 class ClaimedRewardViewSet(viewsets.ModelViewSet):
-    permission_classes = (permissions.IsAuthenticated)
+    permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.ClaimedRewardSerializer
 
     def get_queryset(self):
         return Claimed_reward.objects.filter(profile__user=self.request.user.pk)
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(mixins.RetrieveModelMixin,
+                  mixins.ListModelMixin,
+                  viewsets.GenericViewSet):
     permission_classes = (permissions.IsAuthenticated,)
     serializer_class = serializers.UserSerializer
 

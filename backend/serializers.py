@@ -31,11 +31,13 @@ class WalkHistorySerializer(serializers.HyperlinkedModelSerializer):
 
 
 class RewardSerializer(serializers.HyperlinkedModelSerializer):
-    restaurant = serializers.PrimaryKeyRelatedField(many=False, read_only=False, queryset=Restaurant.objects.all())
+    # restaurant = serializers.PrimaryKeyRelatedField(many=False, read_only=True)
+    description = serializers.CharField(read_only=True)
+    cost = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Reward
-        fields = ['restaurant', 'description', 'cost']
+        fields = ['description', 'cost']
 
 
 class ClaimedRewardSerializer(serializers.HyperlinkedModelSerializer):
@@ -82,19 +84,37 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
+    # email = serializers.EmailField(label="Email Address")
+    # first_name = serializers.CharField()
+    # last_name = serializers.CharField()
     profile = ProfileSerializer(many=False, read_only=True)
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'profile']
+        fields = ['id', 'email', 'first_name', 'last_name', 'profile']
+
+    # TODO Allow editing of user data through the API and APP
+    # def update(self, instance, validated_data):
+    #     raise serializers.ValidationError({'Message': "Not allowed"})
 
 
 class RestaurantSerializer(serializers.HyperlinkedModelSerializer):
+    # id = serializers.IntegerField(read_only=True)
+    # name = serializers.CharField(read_only=True)
+    # address = serializers.CharField(read_only=True)
+    # latitude = serializers.FloatField(read_only=True)
+    # longitude = serializers.FloatField(read_only=True)
+    # lunchtime_start = serializers.TimeField(read_only=True)
+    # lunchtime_end = serializers.TimeField(read_only=True)
     reward_set = RewardSerializer(many=True, read_only=True)
 
     class Meta:
         model = Restaurant
         fields = ['id', 'name', 'address', 'latitude', 'longitude', 'lunchtime_start', 'lunchtime_end', 'reward_set']
+
+    # TODO Allow editing of restaurant data through the API and APP
+    # def update(self, instance, validated_data):
+    #     raise serializers.ValidationError({'Message': "Not allowed"})
 
 
 # https://github.com/beingaskar/django-rest-framework-user-registration
