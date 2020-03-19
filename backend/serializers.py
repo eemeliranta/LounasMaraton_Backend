@@ -91,7 +91,7 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'email', 'first_name', 'last_name', 'profile']
+        fields = ['id', 'username', 'first_name', 'last_name', 'profile']
 
     # TODO Allow editing of user data through the API and APP
     # def update(self, instance, validated_data):
@@ -119,7 +119,7 @@ class RestaurantSerializer(serializers.HyperlinkedModelSerializer):
 
 # https://github.com/beingaskar/django-rest-framework-user-registration
 class UserRegistrationSerializer(serializers.ModelSerializer):
-    email = serializers.EmailField(label="Email Address")
+    username = serializers.EmailField(label="Email Address")
     password = serializers.CharField(style={'input_type': 'password'})
     password_2 = serializers.CharField(label="Confirm Password", style={'input_type': 'password'})
     first_name = serializers.CharField(required=True)
@@ -127,11 +127,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     class Meta(object):
         model = User
-        fields = ['email', 'password', 'password_2', 'first_name', 'last_name']
+        fields = ['username', 'password', 'password_2', 'first_name', 'last_name']
 
-    def validate_email(self, value):
-        if User.objects.filter(email=value).exists():
-            raise serializers.ValidationError("Email already exists.")
+    def validate_username(self, value):
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError("Username already exists.")
         return value
 
     def validate_password(self, value):
@@ -148,8 +148,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user_data = {
-            'username': validated_data.get('email'),
-            'email': validated_data.get('email'),
+            'username': validated_data.get('username'),
             'password': validated_data.get('password'),
             'first_name': validated_data.get('first_name'),
             'last_name': validated_data.get('last_name')
