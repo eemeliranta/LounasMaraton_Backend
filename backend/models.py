@@ -33,8 +33,10 @@ class Profile(models.Model):
     def total_points(self):
         total_walked = Walk_history.objects.filter(profile=self).aggregate(Sum('distance')).get('distance__sum')
         claimed_rewards = Claimed_reward.objects.filter(profile=self).aggregate(Sum('reward__cost')).get('reward__cost__sum')
-        if total_walked or claimed_rewards:
+        if total_walked and claimed_rewards:
             return total_walked - claimed_rewards
+        elif total_walked:
+            return total_walked
         return 0
 
     # List of points the user has, per restaurant

@@ -72,3 +72,9 @@ class UserRegistrationAPIView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
     serializer_class = serializers.UserRegistrationSerializer
     queryset = User.objects.all()
+
+
+class RewardClaimingAPIView(generics.CreateAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    serializer_class = serializers.RewardClaimingSerializer
+    queryset = Claimed_reward.objects.all()

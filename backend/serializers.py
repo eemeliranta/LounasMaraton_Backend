@@ -45,11 +45,11 @@ class ClaimedRewardSerializer(serializers.HyperlinkedModelSerializer):
     reward = serializers.PrimaryKeyRelatedField(many=False, read_only=False, queryset=Reward.objects.all())
     timestamp = serializers.DateTimeField(read_only=True)
     passcode = serializers.CharField(read_only=True)
-    redeemed = serializers.BooleanField(read_only=False)
+    redeemed = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Claimed_reward
-        fields = ['pk', 'profile', 'reward', 'timestamp', 'passcode', 'redeemed']
+        fields = ['profile', 'reward', 'timestamp', 'passcode', 'redeemed']
 
     def create(self, validated_data):
         user = self.context['request'].user
@@ -67,11 +67,12 @@ class ClaimedRewardSerializer(serializers.HyperlinkedModelSerializer):
                                              reward=validated_data['reward'])
 
     def update(self, instance, validated_data):
-        if self.context['request'].user.profile.manager_of != instance.reward.restaurant:
-            raise serializers.ValidationError({'Message': "You are not a manager of this restaurant"})
-
-        instance.redeemed = validated_data.get('redeemed', instance.redeemed)
-        instance.save()
+        # if self.context['request'].user.profile.manager_of != instance.reward.restaurant:
+        #     raise serializers.ValidationError({'Message': "You are not a manager of this restaurant"})
+        #
+        # instance.redeemed = validated_data.get('redeemed', instance.redeemed)
+        # instance.save()
+        raise serializers.ValidationError({'Message': "Action not allowed"})
         return instance
 
 
@@ -131,19 +132,19 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
     def validate_username(self, value):
         if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError("Username already exists.")
+            raise serializers.ValidationError({'username': 'Sähköposti on jo rekisteröity'})
         return value
 
     def validate_password(self, value):
         if len(value) < 8:
-            raise serializers.ValidationError("Password should be atleast 8 characters long.")
+            raise serializers.ValidationError({'password': 'Password should be at least 8 characters long.'})
         return value
 
     def validate_password_2(self, value):
         data = self.get_initial()
         password = data.get('password')
         if password != value:
-            raise serializers.ValidationError("Passwords doesn't match.")
+            raise serializers.ValidationError({'username': 'Passwords do not match.'})
         return value
 
     def create(self, validated_data):
@@ -156,3 +157,27 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
         User.objects.create_user(**user_data)
         return validated_data
+
+
+class RewardClaimingSerializer(serializers.ModelSerializer):
+    passcode = serializers.CharField(required=True)
+    redeemed = serializers.BooleanField(read_only=True)
+    timestamp = serializers.DateTimeField(read_only=True)
+
+    class Meta:
+        model = Claimed_reward
+        fields = ['passcode','redeemed','timestamp']
+
+    def create(self, validated_data):
+        user = self.context['request'].user
+        code = Claimed_reward.objects.filter(redeemed=False, passcode=validated_data.get('passcode').upper()).first()
+        if code:
+            if user.profile.manager_of == code.reward.restaurant:
+                code.redeemed = True
+                code.timestamp = datetime.now().strftime("%Y-%m-%dT%H:%M:%S")
+                code.save()
+                return code
+            else:
+                raise serializers.ValidationError('Invalid permissions')
+        else:
+            raise serializers.ValidationError('Invalid code')

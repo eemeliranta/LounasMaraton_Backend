@@ -17,5 +17,6 @@ urlpatterns = [
     path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
     path('api-auth/', include('rest_framework.urls')),
     path('register/', views.UserRegistrationAPIView.as_view(), name='register'),
+    path('api/claim/', views.RewardClaimingAPIView.as_view(), name='claim'),
     re_path('^api/', include(router.urls)),
 ]
