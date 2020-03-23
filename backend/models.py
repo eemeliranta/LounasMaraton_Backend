@@ -1,5 +1,5 @@
 from django.db import models
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.db.models import Sum
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -28,14 +28,34 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     manager_of = models.ForeignKey(Restaurant, blank=True, null=True, on_delete=models.PROTECT)
 
+    @property
+    def full_name(self):
+        return '%s %s' % (self.user.first_name, self.user.last_name)
+
     # Total amount of points the user has
     @property
     def total_points(self):
         total_walked = Walk_history.objects.filter(profile=self).aggregate(Sum('distance')).get('distance__sum')
-        claimed_rewards = Claimed_reward.objects.filter(profile=self).aggregate(Sum('reward__cost')).get('reward__cost__sum')
+        claimed_rewards = Claimed_reward.objects.filter(profile=self, redeemed=True).aggregate(Sum('reward__cost')).get('reward__cost__sum')
         if total_walked and claimed_rewards:
             return total_walked - claimed_rewards
         elif total_walked:
+            return total_walked
+        return 0
+
+    @property
+    def total_walked(self):
+        total_walked = Walk_history.objects.filter(profile=self).aggregate(Sum('distance')).get('distance__sum')
+        if total_walked:
+            return total_walked
+        return 0
+
+    @property
+    def total_walked_month(self):
+        start = (datetime.now() - timedelta(days=30))
+        end = datetime.now()
+        total_walked = Walk_history.objects.filter(profile=self, timestamp__range=(start, end)).aggregate(Sum('distance')).get('distance__sum')
+        if total_walked:
             return total_walked
         return 0
 
@@ -79,7 +99,7 @@ class Profile(models.Model):
         ordering = ['user']
 
     def __str__(self):
-        return '%s %s (%s)' % (self.user.first_name, self.user.last_name, self.user.username)
+        return '%s (%s)' % (self.full_name, self.user.username)
 
 
 # Automatically create a profile when user is created or modified

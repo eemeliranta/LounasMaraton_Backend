@@ -37,7 +37,7 @@ class RewardSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Reward
-        fields = ['description', 'cost']
+        fields = ['id','description', 'cost']
 
 
 class ClaimedRewardSerializer(serializers.HyperlinkedModelSerializer):
@@ -58,7 +58,7 @@ class ClaimedRewardSerializer(serializers.HyperlinkedModelSerializer):
 
         # Check that user has enough credits to buy reward
         if user.profile.total_points < validated_data['reward'].cost:
-            raise serializers.ValidationError({'Message': "Not enough credits"})
+            raise serializers.ValidationError('Sinulla ei ole tarpeeksi pisteitä')
 
         return Claimed_reward.objects.create(profile=user.profile,
                                              timestamp=datetime.now().strftime("%Y-%m-%dT%H:%M:%S"),
@@ -72,7 +72,7 @@ class ClaimedRewardSerializer(serializers.HyperlinkedModelSerializer):
         #
         # instance.redeemed = validated_data.get('redeemed', instance.redeemed)
         # instance.save()
-        raise serializers.ValidationError({'Message': "Action not allowed"})
+        raise serializers.ValidationError('Action not allowed')
         return instance
 
 
@@ -81,7 +81,7 @@ class ProfileSerializer(serializers.HyperlinkedModelSerializer):
 
     class Meta:
         model = Profile
-        fields = ['manager_of', 'total_points']
+        fields = ['manager_of', 'total_points', 'total_walked', 'total_walked_month']
 
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
@@ -160,13 +160,19 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
 
 
 class RewardClaimingSerializer(serializers.ModelSerializer):
+    fullname = serializers.SerializerMethodField()
+    reward = RewardSerializer(read_only=True)
     passcode = serializers.CharField(required=True)
     redeemed = serializers.BooleanField(read_only=True)
     timestamp = serializers.DateTimeField(read_only=True)
 
     class Meta:
         model = Claimed_reward
-        fields = ['passcode','redeemed','timestamp']
+        fields = ['fullname','reward','passcode','redeemed','timestamp']
+
+    def get_fullname(self, obj):
+        print(obj.profile.user.profile.full_name)
+        return obj.profile.user.profile.full_name
 
     def create(self, validated_data):
         user = self.context['request'].user
@@ -178,6 +184,8 @@ class RewardClaimingSerializer(serializers.ModelSerializer):
                 code.save()
                 return code
             else:
-                raise serializers.ValidationError('Invalid permissions')
+                print('Ei oikeuksia')
+                raise serializers.ValidationError('Ei oikeuksia (Toisen ravintolan koodi?)')
         else:
-            raise serializers.ValidationError('Invalid code')
+            print('Väärä koodi')
+            raise serializers.ValidationError('Väärä koodi')
